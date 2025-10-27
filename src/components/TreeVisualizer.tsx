@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import {
   ReactFlow,
   MiniMap,
@@ -9,12 +9,18 @@ import {
   Node,
   Edge,
   BackgroundVariant,
+  useReactFlow,
+  ReactFlowProvider,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import { toPng } from "html-to-image";
 import { ObjectNode } from "./nodes/ObjectNode";
 import { ArrayNode } from "./nodes/ArrayNode";
 import { PrimitiveNode } from "./nodes/PrimitiveNode";
 import { SearchBar } from "./SearchBar";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
+import { toast } from "sonner";
 
 interface TreeVisualizerProps {
   jsonData: any;
@@ -33,10 +39,12 @@ interface NodeData extends Record<string, unknown> {
   isHighlighted?: boolean;
 }
 
-export const TreeVisualizer = ({ jsonData }: TreeVisualizerProps) => {
+const TreeVisualizerInner = ({ jsonData }: TreeVisualizerProps) => {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node<NodeData>>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const [searchResult, setSearchResult] = useState<string | null>(null);
+  const reactFlowWrapper = useRef<HTMLDivElement>(null);
+  const { getNodes } = useReactFlow();
 
   const generateTree = useCallback((data: any) => {
     const newNodes: Node<NodeData>[] = [];
@@ -236,10 +244,56 @@ export const TreeVisualizer = ({ jsonData }: TreeVisualizerProps) => {
     [nodes, setNodes]
   );
 
+  const handleDownload = useCallback(async () => {
+    if (!reactFlowWrapper.current) return;
+
+    try {
+      const dataUrl = await toPng(reactFlowWrapper.current, {
+        backgroundColor: getComputedStyle(document.documentElement)
+          .getPropertyValue('--background')
+          .trim()
+          ? `hsl(${getComputedStyle(document.documentElement).getPropertyValue('--background').trim()})`
+          : '#ffffff',
+        filter: (node) => {
+          // Exclude controls and minimap from the download
+          if (
+            node?.classList?.contains('react-flow__controls') ||
+            node?.classList?.contains('react-flow__minimap')
+          ) {
+            return false;
+          }
+          return true;
+        },
+      });
+
+      const link = document.createElement('a');
+      link.download = 'json-tree.png';
+      link.href = dataUrl;
+      link.click();
+      toast.success("Tree downloaded successfully!");
+    } catch (error) {
+      console.error('Error downloading image:', error);
+      toast.error("Failed to download tree image");
+    }
+  }, []);
+
   return (
     <div className="flex flex-col h-full gap-4">
-      <SearchBar onSearch={handleSearch} searchResult={searchResult} />
-      <div className="flex-1 bg-card border border-border rounded-lg overflow-hidden">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex-1">
+          <SearchBar onSearch={handleSearch} searchResult={searchResult} />
+        </div>
+        <Button
+          onClick={handleDownload}
+          variant="outline"
+          size="default"
+          className="flex-shrink-0"
+        >
+          <Download className="w-4 h-4 mr-2" />
+          Download
+        </Button>
+      </div>
+      <div ref={reactFlowWrapper} className="flex-1 bg-card border border-border rounded-lg overflow-hidden">
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -268,5 +322,13 @@ export const TreeVisualizer = ({ jsonData }: TreeVisualizerProps) => {
         </ReactFlow>
       </div>
     </div>
+  );
+};
+
+export const TreeVisualizer = ({ jsonData }: TreeVisualizerProps) => {
+  return (
+    <ReactFlowProvider>
+      <TreeVisualizerInner jsonData={jsonData} />
+    </ReactFlowProvider>
   );
 };

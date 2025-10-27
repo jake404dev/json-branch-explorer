@@ -6,6 +6,7 @@ import { FileJson, AlertCircle, Play } from "lucide-react";
 
 interface JsonInputProps {
   onVisualize: (data: any) => void;
+  onClear: () => void;
 }
 
 const SAMPLE_JSON = `{
@@ -69,7 +70,7 @@ const SAMPLE_JSON = `{
   }
 }`;
 
-export const JsonInput = ({ onVisualize }: JsonInputProps) => {
+export const JsonInput = ({ onVisualize, onClear }: JsonInputProps) => {
   const [jsonText, setJsonText] = useState(SAMPLE_JSON);
   const [error, setError] = useState<string | null>(null);
 
@@ -122,9 +123,10 @@ export const JsonInput = ({ onVisualize }: JsonInputProps) => {
           onClick={() => {
             setJsonText("");
             setError(null);
+            onClear();
           }}
         >
-          Clear
+          Clear All
         </Button>
       </div>
     </div>
