@@ -1,6 +1,4 @@
 @import "./theme.css";
-
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -125,7 +123,7 @@ All colors MUST be HSL.
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-gray-300;
   }
 
   body {
