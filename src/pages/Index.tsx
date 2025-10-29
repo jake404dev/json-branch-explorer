@@ -18,25 +18,30 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <FileJson className="w-6 h-6 text-primary" />
+      <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl">
+        <nav className="container mx-auto px-6">
+          <div className="flex items-center justify-between py-4">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <div className="absolute inset-0 bg-primary/20 blur-md rounded-full" />
+                <div className="relative bg-gradient-to-br from-primary to-primary/70 p-2.5 rounded-xl shadow-lg">
+                  <FileJson className="w-5 h-5 text-primary-foreground" strokeWidth={2.5} />
+                </div>
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">
-                  JSON Tree Visualizer
-                </h1>
-                <p className="text-sm text-muted-foreground">
-                  Interactive hierarchical JSON data visualization tool
-                </p>
+              <div className="flex flex-col">
+                <span className="text-xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                  TreeView
+                </span>
+                <span className="text-xs text-muted-foreground font-medium tracking-wide">
+                  JSON Visualizer
+                </span>
               </div>
             </div>
-            <ThemeToggle />
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
+            </div>
           </div>
-        </div>
+        </nav>
       </header>
 
       {/* Main Content */}

@@ -12,14 +12,14 @@ interface JsonInputProps {
 const SAMPLE_JSON = `{
   "user": {
     "id": 12345,
-    "name": "John Doe",
-    "email": "john.doe@example.com",
+    "name": "Pranjali",
+    "email": "pranjali@gmail.com",
     "isActive": true,
     "address": {
-      "street": "123 Main St",
-      "city": "New York",
-      "zipCode": "10001",
-      "country": "USA"
+      "street": "Ashoka Road",
+      "city": "Nagpur",
+      "zipCode": "56899",
+      "country": "India"
     },
     "preferences": {
       "theme": "dark",
@@ -30,7 +30,7 @@ const SAMPLE_JSON = `{
   "orders": [
     {
       "orderId": "ORD-001",
-      "date": "2024-01-15",
+      "date": "2025-01-15",
       "total": 149.99,
       "items": [
         {
